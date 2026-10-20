@@ -1,7 +1,7 @@
 {
-  "name": "ФастТрек — интервальное голодание",
-  "short_name": "ФастТрек",
-  "description": "Дружелюбный таймер интервального голодания с кроликом Крошем",
+  "name": "ПораГолодать — интервальное голодание",
+  "short_name": "ПораГолодать",
+  "description": "Дружелюбный таймер интервального голодания с новым маскотом",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
@@ -9,7 +9,7 @@
   "lang": "ru",
   "icons": [
     {
-      "src": "/1.webp",
+      "src": "/big-chungus-5908358_1280.png",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any maskable"
