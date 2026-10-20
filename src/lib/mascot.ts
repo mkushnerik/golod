@@ -1,1 +1,1 @@
-export const MASCOT_IMAGE = '/1.webp';
+export const MASCOT_IMAGE = '/none-402676145.webp';
