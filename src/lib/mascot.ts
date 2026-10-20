@@ -1,1 +1,1 @@
-export const MASCOT_IMAGE = '/none-402676145.webp';
+export const MASCOT_IMAGE = '/big-chungus-5908358_1280.png';

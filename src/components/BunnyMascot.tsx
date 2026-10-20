@@ -47,7 +47,7 @@ export function BunnyMascot({ progress, message, visible }: BunnyMascotProps) {
         </div>
         <img
           src={MASCOT_IMAGE}
-          alt="Кролик Крош поддерживает тебя"
+          alt="Маскот ПораГолодать поддерживает тебя"
           className="h-28 w-28 object-contain drop-shadow-lg transition-transform duration-700 sm:h-32 sm:w-32"
           style={{
             transform: `${pose === 0 ? 'rotate(-5deg)' : pose === 1 ? 'rotate(4deg) scaleX(-1)' : 'rotate(2deg)'} scale(${slimmerScale})`,
@@ -63,7 +63,7 @@ export function BunnyHero({ size = 160 }: { size?: number }) {
     <div className="flex items-center justify-center">
       <img
         src={MASCOT_IMAGE}
-        alt="Кролик Крош показывает класс"
+        alt="Маскот ПораГолодать показывает класс"
         width={size}
         height={size}
         className="object-contain drop-shadow-xl"

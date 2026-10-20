@@ -115,7 +115,7 @@ function App() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500">
-          <img src={MASCOT_IMAGE} alt="Крош" className="h-full w-full object-cover" />
+          <img src={MASCOT_IMAGE} alt="ПораГолодать" className="h-full w-full object-cover" />
         </div>
       </div>
     );
@@ -139,11 +139,8 @@ function App() {
         {/* Header */}
         <header className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/20">
-              <img src={MASCOT_IMAGE} alt="Крош" className="h-full w-full object-cover" />
-            </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-slate-800">ФастТрек</h1>
+              <h1 className="text-lg font-bold tracking-tight text-slate-800">ПораГолодать</h1>
               <p className="text-xs text-slate-400">Таймер интервального голодания</p>
             </div>
           </div>

@@ -54,9 +54,9 @@ export function Onboarding({ onSignUp, onSignIn }: OnboardingProps) {
         {/* Logo + mascot */}
         <div className="mb-2 flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/20">
-            <img src={MASCOT_IMAGE} alt="Крош" className="h-full w-full object-cover" />
+            <img src={MASCOT_IMAGE} alt="ПораГолодать" className="h-full w-full object-contain" />
           </div>
-          <span className="text-xl font-bold text-slate-800">ФастТрек</span>
+          <span className="text-xl font-bold text-slate-800">ПораГолодать</span>
         </div>
 
         <div className="my-6">
@@ -64,7 +64,7 @@ export function Onboarding({ onSignUp, onSignIn }: OnboardingProps) {
         </div>
 
         <h1 className="mb-2 text-center text-2xl font-bold text-slate-800">
-          {mode === 'signup' ? 'Привет! Я Крош!' : 'С возвращением!'}
+          {mode === 'signup' ? 'Привет! Я ПораГолодать!' : 'С возвращением!'}
         </h1>
         <p className="mb-8 max-w-xs text-center text-sm text-slate-500">
           {mode === 'signup'

@@ -35,7 +35,7 @@ export function useFastingReminders(active: boolean, history: FastingSession[]):
       if (previous?.sessionId === latest.id && now - previous.lastSentAt < REPEAT_MS) return;
 
       try {
-        new Notification('Крош ждёт тебя', {
+        new Notification('ПораГолодать ждёт тебя', {
           body: 'Прошло 24 часа после последнего голодания. Запусти новый трекер, когда будешь готов.',
           icon: MASCOT_IMAGE,
           badge: MASCOT_IMAGE,
