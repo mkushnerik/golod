@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, ReactNode } from 'react';
 import {
   Activity,
   Bell,
+  Flame,
   Moon,
   Sun,
   Timer,
@@ -23,6 +24,7 @@ import { ProgressTab } from '@/components/ProgressTab';
 import { ProfileTab } from '@/components/ProfileTab';
 import { AwardsTab } from '@/components/AwardsTab';
 import { CreatorTab } from '@/components/CreatorTab';
+import { Confetti } from '@/components/Confetti';
 import { ProtocolBackground } from '@/components/ProtocolBackground';
 import {
   PROTOCOLS,
@@ -31,6 +33,8 @@ import {
   formatHoursShort,
   getHourlyFact,
   getMessageForProgress,
+  calculateStreak,
+  getRecommendedStartTime,
 } from '@/lib/fasting';
 
 function App() {
@@ -53,6 +57,8 @@ function App() {
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
   const [mascotMessage, setMascotMessage] = useState('');
   const [mascotVisible, setMascotVisible] = useState(false);
+  const [confettiActive, setConfettiActive] = useState(false);
+  const prevProgressRef = useRef(fasting.progress);
 
   useFastingReminders(fasting.active, fasting.history);
 
@@ -91,7 +97,8 @@ function App() {
       (max, s) => Math.max(max, s.actual_hours ?? 0),
       0,
     );
-    return { completed, totalHours, longest };
+    const streak = calculateStreak(fasting.history);
+    return { completed, totalHours, longest, streak };
   }, [fasting.history]);
 
   const remainingMs = fasting.active
@@ -109,6 +116,16 @@ function App() {
     fasting.finishFast(completed);
     setShowFinishConfirm(false);
   };
+
+  // Trigger confetti when progress crosses 100%
+  useEffect(() => {
+    if (fasting.active && prevProgressRef.current < 1 && fasting.progress >= 1) {
+      setConfettiActive(true);
+      const t = window.setTimeout(() => setConfettiActive(false), 6000);
+      return () => window.clearTimeout(t);
+    }
+    prevProgressRef.current = fasting.progress;
+  }, [fasting.active, fasting.progress]);
 
   // Loading state while checking auth
   if (!auth.ready) {
@@ -202,7 +219,13 @@ function App() {
             </section>
 
             {/* Stats */}
-            <section className="mb-6 grid grid-cols-3 gap-3">
+            <section className="mb-6 grid grid-cols-4 gap-3">
+              <StatCard
+                icon={<Flame size={18} />}
+                label="Серия"
+                value={`${stats.streak} дн`}
+                tint="amber"
+              />
               <StatCard
                 icon={<Activity size={18} />}
                 label="Завершено"
@@ -211,7 +234,7 @@ function App() {
               />
               <StatCard
                 icon={<Zap size={18} />}
-                label="Всего часов"
+                label="Часов"
                 value={formatHoursShort(stats.totalHours)}
                 tint="teal"
               />
@@ -289,6 +312,8 @@ function App() {
 
       {/* Bottom navigation */}
       <BottomNav active={activeTab} onChange={setActiveTab} />
+
+      <Confetti active={confettiActive} />
     </div>
   );
 }
@@ -385,6 +410,8 @@ interface IdleTimerProps {
 }
 
 function IdleTimer({ selectedProtocol, onSelect, onStart, onCustom, customHours, onCustomHours }: IdleTimerProps) {
+  const recommendedTime = getRecommendedStartTime(selectedProtocol);
+
   return (
     <div>
       <div className="mb-5 text-center">
@@ -410,8 +437,15 @@ function IdleTimer({ selectedProtocol, onSelect, onStart, onCustom, customHours,
         </div>
       )}
 
-      <div className="mb-6 rounded-2xl bg-emerald-50/50 px-4 py-3 text-center">
+      <div className="mb-4 rounded-2xl bg-emerald-50/50 px-4 py-3 text-center">
         <span className="text-sm text-slate-500">Режим <span className="font-bold text-slate-700">{selectedProtocol.label}</span> — <span className="font-semibold text-emerald-600">{selectedProtocol.hours} часов</span></span>
+      </div>
+
+      <div className="mb-6 flex items-center gap-2 rounded-2xl bg-amber-50/70 px-4 py-3 text-xs text-amber-700">
+        <Sun size={14} className="shrink-0" />
+        <span className="leading-snug">
+          Рекомендуем начать в <span className="font-bold">{recommendedTime}</span>, чтобы завершить к обеду завтра.
+        </span>
       </div>
 
       <button
@@ -438,6 +472,7 @@ const TINTS: Record<string, { bg: string; text: string }> = {
   emerald: { bg: 'bg-emerald-100', text: 'text-emerald-600' },
   teal: { bg: 'bg-teal-100', text: 'text-teal-600' },
   sky: { bg: 'bg-sky-100', text: 'text-sky-600' },
+  amber: { bg: 'bg-amber-100', text: 'text-amber-600' },
 };
 
 function StatCard({
@@ -446,7 +481,7 @@ function StatCard({
   value,
   tint,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
   value: string;
   tint: keyof typeof TINTS | string;

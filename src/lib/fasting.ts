@@ -126,6 +126,47 @@ export function calculateSavedCalories(data: BodyData, fastHours: number): numbe
   return Math.round(tdee * (fastHours / 24));
 }
 
+export function calculateStreak(sessions: { start_time: string; completed: boolean }[]): number {
+  if (sessions.length === 0) return 0;
+  const completed = sessions.filter((s) => s.completed);
+  if (completed.length === 0) return 0;
+
+  const days = new Set(
+    completed.map((s) => new Date(s.start_time).toISOString().slice(0, 10)),
+  );
+  const sortedDays = Array.from(days).sort().reverse();
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const yesterdayStr = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+
+  if (sortedDays[0] !== todayStr && sortedDays[0] !== yesterdayStr) return 0;
+
+  let streak = 1;
+  for (let i = 1; i < sortedDays.length; i++) {
+    const prev = new Date(sortedDays[i - 1]);
+    const curr = new Date(sortedDays[i]);
+    const diff = (prev.getTime() - curr.getTime()) / 86_400_000;
+    if (diff === 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+export function getRecommendedStartTime(protocol: Protocol): string {
+  const now = new Date();
+  const finishHour = 12;
+  let startHour = ((finishHour - protocol.hours) % 24 + 24) % 24;
+  if (startHour < 18) startHour = 20;
+  if (startHour > 22) startHour = 20;
+  const result = new Date(now);
+  result.setHours(startHour, 0, 0, 0);
+  if (result <= now) result.setDate(result.getDate() + 1);
+  return result.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+
 export function calculateSavedCaloriesForSessions(
   data: BodyData,
   sessions: { actual_hours: number | null }[],

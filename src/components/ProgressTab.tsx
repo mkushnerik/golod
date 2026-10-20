@@ -75,6 +75,19 @@ export function ProgressTab({ history, profile }: ProgressTabProps) {
   const completedCount = calendar.filter((d) => d.completed).length;
   const partialCount = calendar.filter((d) => d.partial).length;
 
+  const goalWeight = profile?.goal_weight_kg ?? null;
+  const currentWeight = profile?.weight_kg ?? null;
+  const weightToGoal =
+    goalWeight !== null && currentWeight !== null
+      ? Math.max(currentWeight - goalWeight, 0)
+      : null;
+  const weightProgress =
+    goalWeight !== null && currentWeight !== null && currentWeight > goalWeight
+      ? Math.min(1 - (currentWeight - goalWeight) / currentWeight, 1)
+      : goalWeight !== null && currentWeight !== null && currentWeight <= goalWeight
+        ? 1
+        : null;
+
   return (
     <div className="space-y-5">
       {/* Calorie savings card */}
@@ -95,6 +108,41 @@ export function ProgressTab({ history, profile }: ProgressTabProps) {
             : 'Заполните данные в профиле для точного расчёта'}
         </p>
       </div>
+
+      {/* Weight goal card */}
+      {goalWeight !== null && currentWeight !== null && (
+        <div className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-800">Цель по весу</h3>
+            {currentWeight <= goalWeight && (
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                Достигнуто!
+              </span>
+            )}
+          </div>
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <p className="text-xs text-slate-400">Сейчас</p>
+              <p className="text-2xl font-bold tabular-nums text-slate-800">{currentWeight} <span className="text-sm font-normal text-slate-400">кг</span></p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-slate-400">Цель</p>
+              <p className="text-2xl font-bold tabular-nums text-emerald-600">{goalWeight} <span className="text-sm font-normal text-slate-400">кг</span></p>
+            </div>
+          </div>
+          <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-700"
+              style={{ width: `${Math.round((weightProgress ?? 0) * 100)}%` }}
+            />
+          </div>
+          {weightToGoal !== null && weightToGoal > 0 && (
+            <p className="mt-2 text-xs text-slate-400">
+              Осталось похудеть на <span className="font-semibold text-slate-600">{weightToGoal.toFixed(1)} кг</span>
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-3">

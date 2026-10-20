@@ -33,6 +33,7 @@ export interface Profile {
   height_cm: number | null;
   age: number | null;
   gender: 'male' | 'female' | null;
+  goal_weight_kg: number | null;
   is_creator: boolean;
   created_at: string;
 }

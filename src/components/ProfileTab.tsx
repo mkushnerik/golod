@@ -35,6 +35,7 @@ export function ProfileTab({
   const [height, setHeight] = useState(String(profile?.height_cm ?? ''));
   const [age, setAge] = useState(String(profile?.age ?? ''));
   const [gender, setGender] = useState<'male' | 'female' | null>(profile?.gender ?? null);
+  const [goalWeight, setGoalWeight] = useState(String(profile?.goal_weight_kg ?? ''));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
@@ -47,6 +48,7 @@ export function ProfileTab({
       setHeight(profile.height_cm ? String(profile.height_cm) : '');
       setAge(profile.age ? String(profile.age) : '');
       setGender(profile.gender ?? null);
+      setGoalWeight(profile.goal_weight_kg ? String(profile.goal_weight_kg) : '');
       formInitialized.current = true;
     }
   }, [profile]);
@@ -56,6 +58,7 @@ export function ProfileTab({
     height_cm: height ? parseFloat(height) : null,
     age: age ? parseInt(age) : null,
     gender,
+    goal_weight_kg: goalWeight ? parseFloat(goalWeight) : null,
   };
 
   const bmr = calculateBMR(bodyData);
@@ -84,7 +87,8 @@ export function ProfileTab({
     }
     setSaving(true);
     try {
-      await onUpdateProfile({ weight_kg: w, height_cm: h, age: a, gender });
+      const gw = goalWeight ? parseFloat(goalWeight) : null;
+      await onUpdateProfile({ weight_kg: w, height_cm: h, age: a, gender, goal_weight_kg: gw });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
@@ -169,6 +173,20 @@ export function ProfileTab({
               value={age}
               onChange={(e) => setAge(e.target.value)}
               placeholder="например, 30"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition-colors focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-100"
+            />
+          </div>
+
+          {/* Goal weight */}
+          <div>
+            <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+              <Weight size={14} /> Целевой вес (кг)
+            </label>
+            <input
+              type="number"
+              value={goalWeight}
+              onChange={(e) => setGoalWeight(e.target.value)}
+              placeholder="например, 65"
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition-colors focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-100"
             />
           </div>
