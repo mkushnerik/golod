@@ -59,6 +59,10 @@ function App() {
   const [mascotVisible, setMascotVisible] = useState(false);
   const [confettiActive, setConfettiActive] = useState(false);
   const prevProgressRef = useRef(fasting.progress);
+  const [awardsBadge, setAwardsBadge] = useState(false);
+  const prevEarnedRef = useRef(0);
+
+  const AWARD_THRESHOLDS = [1, 3, 5, 10, 25, 50];
 
   useFastingReminders(fasting.active, fasting.history);
 
@@ -98,8 +102,17 @@ function App() {
       0,
     );
     const streak = calculateStreak(fasting.history);
-    return { completed, totalHours, longest, streak };
+    const earnedAwards = AWARD_THRESHOLDS.filter((t) => completed >= t).length;
+    return { completed, totalHours, longest, streak, earnedAwards };
   }, [fasting.history]);
+
+  // Show badge on Awards tab when a new award is unlocked
+  useEffect(() => {
+    if (stats.earnedAwards > prevEarnedRef.current && prevEarnedRef.current !== 0) {
+      setAwardsBadge(true);
+    }
+    prevEarnedRef.current = stats.earnedAwards;
+  }, [stats.earnedAwards]);
 
   const remainingMs = fasting.active
     ? Math.max(fasting.targetHours * 3600_000 - fasting.elapsedMs, 0)
@@ -150,7 +163,10 @@ function App() {
 
   return (
     <div className="relative min-h-screen overflow-hidden text-slate-800">
-      <ProtocolBackground difficulty={activeTab === 'timer' ? selectedProtocol.difficulty : null} />
+      <ProtocolBackground
+        difficulty={activeTab === 'timer' ? selectedProtocol.difficulty : null}
+        immersiveProgress={activeTab === 'timer' && fasting.active ? fasting.progress : null}
+      />
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 pb-28 pt-8 sm:pt-12">
         {/* Header */}
@@ -311,7 +327,12 @@ function App() {
       )}
 
       {/* Bottom navigation */}
-      <BottomNav active={activeTab} onChange={setActiveTab} />
+      <BottomNav
+        active={activeTab}
+        onChange={setActiveTab}
+        awardsBadge={awardsBadge}
+        onAwardsSeen={() => setAwardsBadge(false)}
+      />
 
       <Confetti active={confettiActive} />
     </div>

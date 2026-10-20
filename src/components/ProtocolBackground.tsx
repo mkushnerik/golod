@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Difficulty } from '@/lib/fasting';
 
-type ThemeKey = Difficulty | 'neutral';
+type ThemeKey = Difficulty | 'neutral' | 'immersive';
 
 interface Theme {
   background: string;
@@ -35,7 +35,25 @@ const THEMES: Record<ThemeKey, Theme> = {
     emojis: ['🔥', '🔥', '🔥', '💥', '⚡', '🌋', '🔥'],
     count: 18,
   },
+  immersive: {
+    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
+    emojis: [],
+    count: 0,
+  },
 };
+
+// Phase-tinted gradients that blend with the ring color
+const IMMERSIVE_PHASES: { threshold: number; bg: string; emojis: string[]; count: number }[] = [
+  { threshold: 0,   bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%)',          emojis: ['💧', '🌊', '💙'],        count: 7 },
+  { threshold: 0.4, bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 40%, #a7f3d0 100%)',          emojis: ['🍃', '🌿', '🌱', '🍀'], count: 8 },
+  { threshold: 0.75, bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 35%, #fde68a 70%, #fb923c 100%)', emojis: ['⭐', '✨', '🌟', '🔥'], count: 9 },
+  { threshold: 1,   bg: 'linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 40%, #4ade80 80%, #16a34a 100%)',   emojis: ['🎉', '🏆', '✨', '🎊'], count: 10 },
+];
+
+function getImmersiveTheme(progress: number): Theme {
+  const phase = [...IMMERSIVE_PHASES].reverse().find((p) => progress >= p.threshold) ?? IMMERSIVE_PHASES[0];
+  return { background: phase.bg, emojis: phase.emojis, count: phase.count };
+}
 
 interface ParticleConfig {
   id: number;
@@ -64,12 +82,22 @@ function buildParticles(theme: Theme): ParticleConfig[] {
 
 interface ProtocolBackgroundProps {
   difficulty: Difficulty | null;
+  immersiveProgress?: number | null;
 }
 
-export function ProtocolBackground({ difficulty }: ProtocolBackgroundProps) {
-  const targetKey: ThemeKey = difficulty ?? 'neutral';
+export function ProtocolBackground({ difficulty, immersiveProgress }: ProtocolBackgroundProps) {
+  const isImmersive = immersiveProgress !== null && immersiveProgress !== undefined;
+  const targetKey: ThemeKey = isImmersive ? 'immersive' : (difficulty ?? 'neutral');
   const [visibleKey, setVisibleKey] = useState<ThemeKey>(targetKey);
   const [particleOpacity, setParticleOpacity] = useState(1);
+
+  // For immersive mode, compute the live theme from progress
+  const immersiveTheme = useMemo(
+    () => (isImmersive ? getImmersiveTheme(immersiveProgress!) : null),
+    [isImmersive, immersiveProgress],
+  );
+
+  const targetBg = isImmersive && immersiveTheme ? immersiveTheme.background : THEMES[targetKey].background;
 
   useEffect(() => {
     if (visibleKey === targetKey) return;
@@ -81,15 +109,15 @@ export function ProtocolBackground({ difficulty }: ProtocolBackgroundProps) {
     return () => clearTimeout(t);
   }, [targetKey, visibleKey]);
 
-  const theme = THEMES[visibleKey];
+  const theme = isImmersive && immersiveTheme ? immersiveTheme : THEMES[visibleKey];
   const particles = useMemo(() => buildParticles(theme), [theme]);
 
   return (
     <div
       className="fixed inset-0 -z-10"
       style={{
-        background: THEMES[targetKey].background,
-        transition: 'background 0.9s ease-in-out',
+        background: targetBg,
+        transition: 'background 1.2s ease-in-out',
       }}
     >
       <div
