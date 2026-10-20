@@ -9,14 +9,15 @@ export interface Protocol {
   icon: 'leaf' | 'sun' | 'flame' | 'sparkles' | 'shield' | 'moon' | 'heart' | 'sliders';
 }
 
+// Sorted easiest → hardest (ascending hours)
 export const PROTOCOLS: Protocol[] = [
+  { id: '10:14', label: '10:14', hours: 10, description: 'Мягкий режим для возвращения в ритм', difficulty: 'easy', icon: 'heart' },
   { id: '12:12', label: '12:12', hours: 12, description: 'Для новичков — мягкое начало', difficulty: 'easy', icon: 'leaf' },
   { id: '14:10', label: '14:10', hours: 14, description: 'Спокойный ритм на каждый день', difficulty: 'easy', icon: 'sun' },
   { id: '16:8', label: '16:8', hours: 16, description: 'Баланс дисциплины и комфорта', difficulty: 'steady', icon: 'flame' },
   { id: '18:6', label: '18:6', hours: 18, description: 'Продвинутый уровень', difficulty: 'advanced', icon: 'sparkles' },
   { id: '20:4', label: '20:4', hours: 20, description: 'Серьёзный вызов для опытных', difficulty: 'challenge', icon: 'shield' },
   { id: '23:1', label: 'ОМД', hours: 23, description: 'Один приём пищи в день', difficulty: 'challenge', icon: 'moon' },
-  { id: '10:14', label: '10:14', hours: 10, description: 'Мягкий режим для возвращения в ритм', difficulty: 'easy', icon: 'heart' },
 ];
 
 export const MOTIVATIONAL_MESSAGES: string[] = [

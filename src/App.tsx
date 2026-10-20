@@ -23,6 +23,7 @@ import { ProgressTab } from '@/components/ProgressTab';
 import { ProfileTab } from '@/components/ProfileTab';
 import { AwardsTab } from '@/components/AwardsTab';
 import { CreatorTab } from '@/components/CreatorTab';
+import { ProtocolBackground } from '@/components/ProtocolBackground';
 import {
   PROTOCOLS,
   Protocol,
@@ -131,9 +132,10 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
+    <div className="relative min-h-screen overflow-hidden text-slate-800">
+      <ProtocolBackground difficulty={activeTab === 'timer' ? selectedProtocol.difficulty : null} />
 
-      <div className="relative mx-auto max-w-2xl px-5 pb-28 pt-8 sm:pt-12">
+      <div className="relative z-10 mx-auto max-w-2xl px-5 pb-28 pt-8 sm:pt-12">
         {/* Header */}
         <header className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">

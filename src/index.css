@@ -28,6 +28,19 @@ input {
   font: inherit;
 }
 
+@keyframes float-particle {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) rotate(0deg) scale(0.8);
+  }
+  8% { opacity: 1; }
+  85% { opacity: 0.85; }
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh) translateX(var(--drift, 0px)) rotate(var(--rotate, 180deg)) scale(1.1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
